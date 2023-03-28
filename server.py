@@ -16,7 +16,7 @@ def home():
 
 @app.route("/status", methods=['GET'])
 def status():
-    return jsonify({"online": True, "time": time.time()})
+    return jsonify({"online": True, "time": int(time.time())})
 
 @app.route("/getOriginalResin", methods=['GET'])
 async def getOriginalResin():
