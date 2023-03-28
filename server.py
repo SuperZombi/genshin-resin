@@ -11,6 +11,9 @@ app.config['JSON_AS_ASCII'] = False
 CORS(app)
 
 @app.route("/")
+def home():
+	return "<a href='https://github.com/SuperZombi/genshin-resin-api' style='text-align: center; display: block; font-size: 14pt;'>GitHub</a>"
+
 @app.route("/status", methods=['GET'])
 def status():
     return jsonify({"online": True, "time": time.time()})
@@ -47,5 +50,4 @@ async def getOriginalResin():
     abort(400)
 
 if __name__ == '__main__':
-    # app.run(debug=True)
     app.run(host='0.0.0.0', port='80')
