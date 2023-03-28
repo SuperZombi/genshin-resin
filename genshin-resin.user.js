@@ -5,7 +5,11 @@
 // @author       Super Zombi
 // @match        https://www.hoyolab.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=hoyolab.com
-// @grant    GM_addStyle
+// @homepageURL  https://github.com/SuperZombi/genshin-resin-api
+// @supportURL   https://github.com/SuperZombi/genshin-resin-api/issues
+// @updateURL    https://raw.githubusercontent.com/SuperZombi/genshin-resin-api/main/genshin-resin.user.js
+// @downloadURL  https://raw.githubusercontent.com/SuperZombi/genshin-resin-api/main/genshin-resin.user.js
+// @grant        GM_addStyle
 // ==/UserScript==
 
 (function() {
