@@ -139,6 +139,7 @@
     }
 
     window.addEventListener("load", _=>{
+        if (document.getElementById("resin_plugin")){return}
         let div = document.createElement("div")
         div.id = "resin_plugin"
         div.innerHTML = `
