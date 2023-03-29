@@ -6,6 +6,8 @@
 
 <img src="github/images/preview.png">
 
+### <a href="https://genshin-api.superzombi.repl.co/docs" target="_blank">Documentation</a>
+
 ### Install via Tampermonkey:
 1. Install **[Tampermonkey](https://www.tampermonkey.net/)**.
 2. Install **[Script](https://raw.githubusercontent.com/SuperZombi/genshin-resin-api/main/genshin-resin.user.js)**.
