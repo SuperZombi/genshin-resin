@@ -1,6 +1,7 @@
 import uvicorn
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import genshin
 import datetime
@@ -13,6 +14,14 @@ app = FastAPI(title="Genshin Resin API",
         "name": "GitHub",
         "url": "https://github.com/SuperZombi/genshin-resin-api"
     })
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
 
 
 @app.get("/", response_class=HTMLResponse, tags=["Routes"])
