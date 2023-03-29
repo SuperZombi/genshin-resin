@@ -1,53 +1,83 @@
+import uvicorn
+from fastapi import FastAPI, HTTPException
+from fastapi.responses import HTMLResponse
+from pydantic import BaseModel
 import genshin
 import datetime
-from flask import Flask, request, jsonify, abort
-from flask_cors import CORS
 import time
 
-# pip install Flask[async]
+app = FastAPI(title="Genshin Resin API",
+    description="Adds information about original resin to hoyolab",
+    version="1.0.0",
+    contact={
+        "name": "GitHub",
+        "url": "https://github.com/SuperZombi/genshin-resin-api"
+    })
 
-app = Flask(__name__)
-app.config['JSON_AS_ASCII'] = False
-CORS(app)
 
-@app.route("/")
+@app.get("/", response_class=HTMLResponse, tags=["Routes"])
 def home():
-	return "<a href='https://github.com/SuperZombi/genshin-resin-api' style='text-align: center; display: block; font-size: 14pt;'>GitHub</a>"
+    return "<a href='https://github.com/SuperZombi/genshin-resin-api' style='text-align: center; display: block; font-size: 14pt;'>GitHub</a>"
 
-@app.route("/status", methods=['GET'])
+
+class Status(BaseModel):
+    online: bool
+    time: int = int(time.time())
+
+@app.get("/status", response_model=Status, tags=["Routes"])
 def status():
-    return jsonify({"online": True, "time": int(time.time())})
+    return {"online": True, "time": int(time.time())}
 
-@app.route("/getOriginalResin", methods=['GET'])
-async def getOriginalResin():
-    ltuid = request.args.get("ltuid")
-    ltoken = request.args.get("ltoken")
 
-    if ltuid and ltoken:
-        try:
-            cookies = {"ltuid": ltuid, "ltoken": ltoken}
-            client = genshin.Client(cookies)
+class GetOriginalResin(BaseModel):
+    nickname: str
+    uid: int
+    current_resin: int = 0
+    max_resin: int = 160
+    next_recover: int = 480
+    next_recover_str: str = str(datetime.timedelta(seconds=480))
+    full_recover: int = 76800
+    full_recover_str: str = str(datetime.timedelta(seconds=76800))
+    
+@app.get("/getOriginalResin", response_model=GetOriginalResin,
+    tags=["Routes"],
+    description="Get information about user original resin",
+    responses={
+        424: {
+            "description": "Argument values are incorrect",
+            "content": {
+                "application/json": {
+                    "example": {"detail": "Argument values are incorrect"}
+                }
+            }
+        }
+    }
+)
+async def get_Original_Resin(ltuid: int, ltoken: str):
+    try:
+        cookies = {"ltuid": ltuid, "ltoken": ltoken}
+        client = genshin.Client(cookies)
 
-            accounts = await client.get_game_accounts()
-            account = accounts[0]
-            uid = account.uid
+        accounts = await client.get_game_accounts()
+        account = accounts[0]
+        uid = account.uid
 
-            notes = await client.get_notes(uid)
-            next_recover = notes.remaining_resin_recovery_time.seconds % 480
+        notes = await client.get_notes(uid)
+        next_recover = notes.remaining_resin_recovery_time.seconds % 480
 
-            return jsonify({
-                "nickname": account.nickname,
-                "uid": account.uid,
-                "current_resin": notes.current_resin,
-                "max_resin": 160,
-                "next_recover": next_recover,
-                "next_recover_str": str(datetime.timedelta(seconds=next_recover)),
-                "full_recover": notes.remaining_resin_recovery_time.seconds,
-                "full_recover_str": str(notes.remaining_resin_recovery_time),
-            })
-        except:
-            abort(424)
-    abort(400)
+        return {
+            "nickname": account.nickname,
+            "uid": account.uid,
+            "current_resin": notes.current_resin,
+            "max_resin": 160,
+            "next_recover": next_recover,
+            "next_recover_str": str(datetime.timedelta(seconds=next_recover)),
+            "full_recover": notes.remaining_resin_recovery_time.seconds,
+            "full_recover_str": str(notes.remaining_resin_recovery_time)
+        }
+    except:
+        raise HTTPException(status_code=424, detail="Argument values are incorrect")
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port='80')
+
+if __name__ == "__main__":
+    uvicorn.run("__main__:app", host="0.0.0.0", port=80)
