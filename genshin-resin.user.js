@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Genshin Resin
-// @version      1.0
+// @version      1.0.1
 // @description  Adds a button to view info about original resin on hoyolab
 // @author       Super Zombi
 // @match        https://www.hoyolab.com/*
@@ -182,7 +182,9 @@
             let resign = div.querySelector("#resin #resin-area > .text")
             resign.setAttribute("current", currentResin)
             resign.innerHTML = `${currentResin}/160`
-            updateTime(fullRecover)
+            if (fullRecover != 0){
+                updateTime(fullRecover)
+            }
         }
 
         div.classList.remove("error")
