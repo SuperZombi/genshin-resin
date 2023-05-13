@@ -109,7 +109,9 @@
 			let resign = document.querySelector("#resin #resin-area > .text")
 			resign.setAttribute("current", currentResin)
 			resign.innerHTML = `${currentResin}/160`
-			updateTime(fullRecover)
+			if (fullRecover != 0){
+				updateTime(fullRecover)
+			}
 		}
 
 		initResinTimer(159, 10)
