@@ -9,7 +9,7 @@ import time
 
 app = FastAPI(title="Genshin Resin API",
     description="Adds information about original resin to hoyolab",
-    version="1.0.0",
+    version="1.1.0",
     contact={
         "name": "GitHub",
         "url": "https://github.com/SuperZombi/genshin-resin-api"
@@ -64,7 +64,8 @@ class GetOriginalResin(BaseModel):
 )
 async def get_Original_Resin(ltuid: int, ltoken: str):
     try:
-        cookies = {"ltuid": ltuid, "ltoken": ltoken}
+        cookies = {"ltuid": ltuid, "ltoken": ltoken,
+                   "ltuid_v2": ltuid, "ltoken_v2": ltoken}
         client = genshin.Client(cookies)
 
         accounts = await client.get_game_accounts()

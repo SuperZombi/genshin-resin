@@ -1,0 +1,24 @@
+{
+   "manifest_version": 3,
+   "version": "1.1.0",
+   "name": "Genshin Resin",
+   "description": "__MSG_extDesc__",
+   "default_locale": "en",
+   "content_scripts": [{
+      "matches": ["https://www.hoyolab.com/*"],
+      "js": ["script.js"],
+      "css": [ "styles.css" ],
+      "run_at": "document_start"
+   }],
+   "icons": {
+      "128": "images/icon.png"
+   },
+   "web_accessible_resources": [
+      {
+         "resources": [ "images/*" ],
+         "matches": [ "https://www.hoyolab.com/*" ]
+      }
+   ],
+   "homepage_url": "https://github.com/SuperZombi/genshin-resin-api",
+   "minimum_chrome_version": "107.0.5304.87"
+}

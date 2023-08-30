@@ -2,7 +2,7 @@
 
 ### Adds information about original resin to hoyolab.
 
-<img src="https://shields.io/badge/version-v1.0.1-blue">
+<img src="https://shields.io/badge/version-v1.1.0-blue">
 
 <img src="github/images/preview.png">
 
