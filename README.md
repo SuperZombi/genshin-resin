@@ -3,11 +3,12 @@
 ### Adds information about original resin to hoyolab.
 
 <p align="right">
-    <img align="left" src="https://shields.io/badge/version-v1.1.0-blue">
+    <img align="left" src="https://shields.io/badge/version-v2.0.0-blue">
     <a href="#donate">💲Support the Project</a>
 </p>
-
-<img src="github/images/preview.png">
+<p align="center">
+    <img width="500px" src="github/images/preview-2-dark.png">
+</p>
 
 ## Installation:
 ### Chrome:
