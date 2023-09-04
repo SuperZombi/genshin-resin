@@ -37,7 +37,7 @@ window.onload = _=>{
 }
 
 
-function makeRequest(div){
+function makeRequest(div, object="resin"){
 	function intToTime(totalSeconds){
 		let hours = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
 		totalSeconds %= 3600;
@@ -45,44 +45,85 @@ function makeRequest(div){
 		let seconds = String(totalSeconds % 60).padStart(2, '0');
 		return `${hours}:${minutes}:${seconds}`
 	}
-	function updateTime(newTime){
-		if (newTime % 480 == 0){
-			let resign = div.querySelector("#resin #resin-area > .text")
-			let currentResin = parseInt(resign.getAttribute("current")) + 1
-			resign.setAttribute("current", currentResin)
-			resign.innerHTML = `${currentResin}/160`
-		}
+	function updateTime(newTime, type="resin"){
 		let description = div.querySelector("#resin #resin-description")
+		if (type == "resin"){
+			if (newTime % 480 == 0){
+				let resign = div.querySelector("#resin #resin-area > .text")
+				let currentResin = parseInt(resign.getAttribute("current")) + 1
+				resign.setAttribute("current", currentResin)
+				resign.innerHTML = `${currentResin}/160`
+			}
+			description.querySelector("#next-recover").innerHTML = intToTime(newTime % 480)
+		} 
 		description.querySelector("#full-recover").innerHTML = intToTime(newTime)
-		description.querySelector("#next-recover").innerHTML = intToTime(newTime % 480)
 
 		if (newTime <= 0){
 			return
 		}
 		setTimeout(_=>{
-			updateTime(newTime - 1)
+			updateTime(newTime - 1, type)
 		}, 1000)
 	}
-	function initResinTimer(currentResin, fullRecover){
+	function initResinTimer(currentResin, maxResin, fullRecover, type="resin"){
 		let resign = div.querySelector("#resin #resin-area > .text")
 		resign.setAttribute("current", currentResin)
-		resign.innerHTML = `${currentResin}/160`
+		resign.setAttribute("max", maxResin)
+		resign.innerHTML = `${currentResin}/${maxResin}`
 		if (fullRecover != 0){
-			updateTime(fullRecover)
+			updateTime(fullRecover, type)
 		}
 	}
 
+	div.classList.remove("transparent")
 	div.classList.remove("error")
 	div.classList.add("active")
 	div.innerHTML = `
 		<img src="${chrome.runtime.getURL("images/loader.svg")}" height="80%" width="80%" style="margin:auto;">
 	`
 
+	function header(regions=null){
+		let header = document.createElement("div")
+		header.className = "head"
+		header.innerHTML = `
+			<select id="server-select">
+				<option value="" style="text-align: center;">Server</option>
+				<option value="EU">Euro</option>
+				<option value="US">America</option>
+				<option value="AS">Asia</option>
+				<option value="TW">Taiwan</option>
+			</select>
+			<div class="switch-field">
+				<input type="radio" name="realm-resin" value="realm" id="toggle-realm"/>
+				<label for="toggle-realm"><img src="${chrome.runtime.getURL("images/realm_currency.png")}"></label>
+				<input type="radio" name="realm-resin" value="resin" id="toggle-resin"/>
+				<label for="toggle-resin"><img src="${chrome.runtime.getURL("images/original_resin.png")}"></label>
+			</div>
+		`
+		if (regions){
+			for (let region of regions){
+				let e = header.querySelector(`#server-select option[value="${region}"]`)
+				e.style.display = "block"
+			}
+		} else{
+			header.querySelectorAll("#server-select option").forEach(e=>{
+				e.style.display = "block"
+			})
+		}
+		return header.outerHTML
+	}
+
+
 	let xhr = new XMLHttpRequest();
-	const target = new URL('https://genshin-api.superzombi.repl.co/getOriginalResin');
+	let api = object == "resin" ? "getOriginalResin" : "getRealmCurrency"
+	const target = new URL(`https://genshin-api.superzombi.repl.co/${api}`);
 	const params = new URLSearchParams();
 	params.set('ltuid', getCookie('ltuid') || getCookie('ltuid_v2'));
 	params.set('ltoken', getCookie('ltoken') || getCookie('ltoken_v2'));
+	let prefer_region = window.localStorage.getItem("prefer_region")
+	if (prefer_region){
+		params.set('prefer_region', prefer_region);
+	}
 	target.search = params.toString();
 	xhr.open("GET", target.href, true)
 	xhr.onload = _=>{
@@ -92,32 +133,98 @@ function makeRequest(div){
 			div.innerHTML = `
 				<div id="resin">
 					<div id="resin-description">
+						${header(answer.user_regions)}
+						<div style="height: 5px"></div>
 						<span class="text">${get_message("full_recover")}</span>
 						<span class="time" id="full-recover">00:00:00</span>
-						<div style="height: 5px"></div>
-						<span class="text">${get_message("next_recover")}</span>
-						<span class="time" id="next-recover">00:00:00</span>
+						${object == "resin" ? `
+							<div style="height: 5px"></div>
+							<span class="text">${get_message("next_recover")}</span>
+							<span class="time" id="next-recover">00:00:00</span>
+						` : ""}
 					</div>
 					<div id="resin-area">
-						<img src="${chrome.runtime.getURL("images/original_resin.png")}">
+						${object == "resin" ? `
+							<img src="${chrome.runtime.getURL("images/original_resin.png")}">
+						` : `
+							<img src="${chrome.runtime.getURL("images/realm_currency.png")}">
+						`}
 						<span class="text" current="0">0/160</span>
 					</div>
 				</div>
 			`
-			initResinTimer(answer.current_resin, answer.full_recover)
-		} else{
-			console.error("Error fetching /getOriginalResin")
-			div.classList.remove("active")
-			div.classList.add("error")
-			setTimeout(_=>{div.classList.remove("error")}, 2000)
-			div.innerHTML = `
-				<img src="${chrome.runtime.getURL("images/original_resin.png")}" height="100%" width="100%">
-			`
-			div.onclick = _=>{
-				div.onclick = null;
-				makeRequest(div)
+			if (object == "resin"){
+				div.querySelector("#toggle-resin").checked = true
+				initResinTimer(answer.current_resin, answer.max_resin, answer.full_recover)
+			} else{
+				div.querySelector("#toggle-realm").checked = true
+				initResinTimer(answer.current_realm, answer.max_realm, answer.full_recover, "realm")
 			}
+			div.querySelector(`#server-select option[value="${answer.current_region}"]`).selected = true;
+			after()
+		} else{
+			console.error(`Error fetching /${api}`)
+
+			////////////////////////////////////////
+			let xhr = new XMLHttpRequest();
+			const target = new URL('https://genshin-api.superzombi.repl.co/getUserRegions');
+			const params = new URLSearchParams();
+			params.set('ltuid', getCookie('ltuid') || getCookie('ltuid_v2'));
+			params.set('ltoken', getCookie('ltoken') || getCookie('ltoken_v2'));
+			target.search = params.toString();
+			xhr.open("GET", target.href, true)
+			xhr.onload = _=>{
+				if (xhr.status == 200){
+					let answer = JSON.parse(xhr.response);
+					div.classList.add("transparent")
+					div.innerHTML = `
+						<div id="resin">
+							<div id="resin-description">
+								${header(answer.user_regions)}
+							</div>
+							<div id="resin-area">
+								${object == "resin" ? `
+									<img src="${chrome.runtime.getURL("images/original_resin.png")}">
+								` : `
+									<img src="${chrome.runtime.getURL("images/realm_currency.png")}">
+								`}
+								<span class="text" current="0">0/0</span>
+							</div>
+						</div>
+					`
+					let swicher = object == "resin" ? div.querySelector("#toggle-resin") : div.querySelector("#toggle-realm")
+					swicher.checked = true
+					after()
+				}
+				else{
+					console.error('Error fetching /getUserRegions')
+					div.classList.remove("active")
+					div.classList.add("error")
+					setTimeout(_=>{div.classList.remove("error")}, 2000)
+					div.innerHTML = `
+						<img src="${chrome.runtime.getURL("images/original_resin.png")}" height="100%" width="100%">
+					`
+					div.onclick = _=>{
+						div.onclick = null;
+						makeRequest(div)
+					}
+				}
+			}
+			xhr.send()
 		}
 	}
 	xhr.send()
+
+	function after(){
+		div.querySelectorAll(".switch-field input").forEach(e=>{
+			e.onclick = _=>{
+				makeRequest(div, e.value)
+			}
+		})
+		div.querySelector("#server-select").onchange = e=>{
+			window.localStorage.setItem("prefer_region", e.target.value)
+			let target = div.querySelector(".switch-field input:checked").value
+			makeRequest(div, target)
+		}
+	}
 }

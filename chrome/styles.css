@@ -7,6 +7,7 @@
     width: 60px;
     transform: translateY(25%);
     background: rgba(0, 192, 255, 0.5);
+    backdrop-filter: blur(5px);
     opacity: 0.75;
     border-radius: 18px 18px 0px 0px;
     transition: 0.3s;
@@ -32,6 +33,7 @@
     cursor: auto;
     height: unset;
     width: unset;
+    backdrop-filter: none;
 }
 
 #resin{
@@ -44,6 +46,7 @@
 }
 #resin-area{
     background: rgb(100, 100, 100, 0.6);
+    backdrop-filter: blur(2px);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -71,6 +74,7 @@
     position: absolute;
     bottom: calc(100% + 6px);
     right: 0;
+    backdrop-filter: blur(2px);
 }
 #resin-description > .text{
     color: #d0be8e;
@@ -79,4 +83,56 @@
 #resin:hover #resin-description{
     visibility: visible;
     opacity: 1;
+}
+
+#resin-description > .head{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#server-select{
+    border: none;
+    outline: none;
+    background: #242734;
+    color: white;
+    border-radius: 0.3em;
+    padding: 0.1em 0.25em;
+    width: fit-content;
+    max-width: 50%;
+}
+#server-select option{
+    display: none;
+}
+
+#resin-description .switch-field{
+    display: flex;
+    max-width: 50%;
+}
+#resin-description .switch-field img{
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+}
+#resin-description .switch-field input{
+    display: none;
+}
+#resin-description .switch-field label{
+    width: 30px;
+    height: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.25s ease-in-out;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#resin-description .switch-field label:first-of-type {
+    border-radius: 8px 0 0 8px;
+}
+#resin-description .switch-field label:last-of-type {
+    border-radius: 0 8px 8px 0;
+}
+#resin-description .switch-field input:checked + label{
+    box-shadow: inset 0px 0px 4px white;
 }
