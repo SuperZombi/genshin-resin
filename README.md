@@ -25,6 +25,10 @@
 
 <hr>
 
+### ⚠️ [Plugin not working](https://github.com/SuperZombi/genshin-resin-api/issues/1) `FIX`
+
+<hr>
+
 ### <a href="https://genshin-api.superzombi.repl.co/docs">API Documentation</a>
 
 <hr>
