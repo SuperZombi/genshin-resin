@@ -11,6 +11,9 @@
 </p>
 
 ## Installation:
+
+### [Chrome Web Store](https://chrome.google.com/webstore/detail/genshin-resin/kjplkomildkjihefphmmjbomchgggakf)
+
 ### Chrome:
   1. Download latest **[Release](https://github.com/SuperZombi/genshin-resin-api/releases)**.
   2. Extract the archive to an installation location.
@@ -22,6 +25,10 @@
 ### Tampermonkey:
   1. Install **[Tampermonkey](https://www.tampermonkey.net/)**.
   2. Install **[Script](https://raw.githubusercontent.com/SuperZombi/genshin-resin-api/main/genshin-resin.user.js)**.
+
+<hr>
+
+### ⚠️ [Plugin not working](https://github.com/SuperZombi/genshin-resin-api/issues/1) `FIX`
 
 <hr>
 
