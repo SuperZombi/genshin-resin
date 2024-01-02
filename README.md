@@ -3,7 +3,7 @@
 ### Adds information about original resin to hoyolab.
 
 <p align="right">
-    <img align="left" src="https://shields.io/badge/version-v2.0.0-blue">
+    <img align="left" src="https://shields.io/badge/version-v2.1.0-blue">
     <a href="#donate"><img src="https://shields.io/badge/💲-Support_the_Project-2ea043"></a>
 </p>
 <p align="center">

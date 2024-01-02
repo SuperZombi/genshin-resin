@@ -1,9 +1,15 @@
 import genshin
 from models import GenshinServer
 
-def login(ltuid, ltoken):
-    cookies = {"ltuid": ltuid, "ltoken": ltoken,
-               "ltuid_v2": ltuid, "ltoken_v2": ltoken}
+def login(ltuid, ltoken, ltmid=""):
+    cookies = {
+        "ltuid": ltuid,
+        "ltoken": ltoken,
+        "ltmid": ltmid,
+        "ltuid_v2": ltuid,
+        "ltoken_v2": ltoken,
+        "ltmid_v2": ltmid
+    }
     return genshin.Client(cookies)
 
 async def get_accounts(client):

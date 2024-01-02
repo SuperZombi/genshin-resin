@@ -37,7 +37,7 @@ window.onload = _=>{
 }
 
 
-function makeRequest(div, object="resin"){
+async function makeRequest(div, object="resin"){
 	function intToTime(totalSeconds){
 		let hours = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
 		totalSeconds %= 3600;
@@ -47,6 +47,7 @@ function makeRequest(div, object="resin"){
 	}
 	function updateTime(newTime, type="resin"){
 		let description = div.querySelector("#resin #resin-description")
+		if (!description){return}
 		if (type == "resin"){
 			if (newTime % 480 == 0){
 				let resign = div.querySelector("#resin #resin-area > .text")
@@ -55,7 +56,7 @@ function makeRequest(div, object="resin"){
 				resign.innerHTML = `${currentResin}/160`
 			}
 			description.querySelector("#next-recover").innerHTML = intToTime(newTime % 480)
-		} 
+		}
 		description.querySelector("#full-recover").innerHTML = intToTime(newTime)
 
 		if (newTime <= 0){
@@ -118,8 +119,21 @@ function makeRequest(div, object="resin"){
 	let api = object == "resin" ? "getOriginalResin" : "getRealmCurrency"
 	const target = new URL(`https://genshin-api.superzombi.repl.co/${api}`);
 	const params = new URLSearchParams();
-	params.set('ltuid', getCookie('ltuid') || getCookie('ltuid_v2'));
-	params.set('ltoken', getCookie('ltoken') || getCookie('ltoken_v2'));
+
+	let ltuid = getCookie('ltuid') || getCookie('ltuid_v2');
+	let ltmid = getCookie('ltmid') || getCookie('ltmid_v2');
+	let ltoken = getCookie('ltoken') || getCookie('ltoken_v2');
+
+	if (ltoken){
+		save_user_account(ltoken)
+	} else{
+		let data = await get_user_account();
+		ltoken = data.ltoken;
+	}
+
+	params.set('ltuid', ltuid);
+	params.set('ltmid', ltmid);
+	params.set('ltoken', ltoken);
 	let prefer_region = window.localStorage.getItem("prefer_region")
 	if (prefer_region){
 		params.set('prefer_region', prefer_region);
@@ -168,9 +182,6 @@ function makeRequest(div, object="resin"){
 			////////////////////////////////////////
 			let xhr = new XMLHttpRequest();
 			const target = new URL('https://genshin-api.superzombi.repl.co/getUserRegions');
-			const params = new URLSearchParams();
-			params.set('ltuid', getCookie('ltuid') || getCookie('ltuid_v2'));
-			params.set('ltoken', getCookie('ltoken') || getCookie('ltoken_v2'));
 			target.search = params.toString();
 			xhr.open("GET", target.href, true)
 			xhr.onload = _=>{
@@ -182,18 +193,10 @@ function makeRequest(div, object="resin"){
 							<div id="resin-description">
 								${header(answer.user_regions)}
 							</div>
-							<div id="resin-area">
-								${object == "resin" ? `
-									<img src="${chrome.runtime.getURL("images/original_resin.png")}">
-								` : `
-									<img src="${chrome.runtime.getURL("images/realm_currency.png")}">
-								`}
-								<span class="text" current="0">0/0</span>
-							</div>
+							<div id="resin-area"><img src="${chrome.runtime.getURL("images/original_resin.png")}"></div>
 						</div>
 					`
-					let swicher = object == "resin" ? div.querySelector("#toggle-resin") : div.querySelector("#toggle-realm")
-					swicher.checked = true
+					div.querySelector("#toggle-resin").checked = true
 					after()
 				}
 				else{
@@ -227,4 +230,15 @@ function makeRequest(div, object="resin"){
 			makeRequest(div, target)
 		}
 	}
+}
+
+async function get_user_account(){
+	return new Promise((resolve)=>{
+		chrome.storage.sync.get(["ltoken"], function(items){
+			resolve(items)
+		});
+	})
+}
+function save_user_account(ltoken){
+	chrome.storage.sync.set({"ltoken": ltoken});
 }

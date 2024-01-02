@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Genshin Resin
-// @version      2.0.0
+// @version      2.1.0
 // @description  Adds a button to view info about original resin on hoyolab
 // @author       Super Zombi
 // @match        https://www.hoyolab.com/*
@@ -10,6 +10,8 @@
 // @updateURL    https://raw.githubusercontent.com/SuperZombi/genshin-resin-api/main/genshin-resin.user.js
 // @downloadURL  https://raw.githubusercontent.com/SuperZombi/genshin-resin-api/main/genshin-resin.user.js
 // @grant        GM_addStyle
+// @grant        GM_setValue
+// @grant        GM_getValue
 // ==/UserScript==
 
 (function() {
@@ -220,6 +222,7 @@
         }
         function updateTime(newTime, type="resin"){
             let description = div.querySelector("#resin #resin-description")
+            if (!description){return}
             if (type == "resin"){
                 if (newTime % 480 == 0){
                     let resign = div.querySelector("#resin #resin-area > .text")
@@ -228,7 +231,7 @@
                     resign.innerHTML = `${currentResin}/160`
                 }
                 description.querySelector("#next-recover").innerHTML = intToTime(newTime % 480)
-            } 
+            }
             description.querySelector("#full-recover").innerHTML = intToTime(newTime)
 
             if (newTime <= 0){
@@ -289,8 +292,19 @@
         let api = object == "resin" ? "getOriginalResin" : "getRealmCurrency"
         const target = new URL(`https://genshin-api.superzombi.repl.co/${api}`);
         const params = new URLSearchParams();
-        params.set('ltuid', getCookie('ltuid') || getCookie('ltuid_v2'));
-        params.set('ltoken', getCookie('ltoken') || getCookie('ltoken_v2'));
+
+        let ltuid = getCookie('ltuid') || getCookie('ltuid_v2');
+        let ltmid = getCookie('ltmid') || getCookie('ltmid_v2');
+        let ltoken = getCookie('ltoken') || getCookie('ltoken_v2');
+        
+        if (ltoken){
+            GM_setValue("ltoken", ltoken);
+        } else{
+            ltoken = GM_getValue("ltoken");
+        }
+        params.set('ltuid', ltuid);
+        params.set('ltmid', ltmid);
+        params.set('ltoken', ltoken);
         let prefer_region = window.localStorage.getItem("prefer_region")
         if (prefer_region){
             params.set('prefer_region', prefer_region);
@@ -339,9 +353,6 @@
                 ////////////////////////////////////////
                 let xhr = new XMLHttpRequest();
                 const target = new URL('https://genshin-api.superzombi.repl.co/getUserRegions');
-                const params = new URLSearchParams();
-                params.set('ltuid', getCookie('ltuid') || getCookie('ltuid_v2'));
-                params.set('ltoken', getCookie('ltoken') || getCookie('ltoken_v2'));
                 target.search = params.toString();
                 xhr.open("GET", target.href, true)
                 xhr.onload = _=>{
@@ -353,18 +364,10 @@
                                 <div id="resin-description">
                                     ${header(answer.user_regions)}
                                 </div>
-                                <div id="resin-area">
-                                    ${object == "resin" ? `
-                                        <img src="${images["original_resin.png"]}">
-                                    ` : `
-                                        <img src="${images["realm_currency.png"]}">
-                                    `}
-                                    <span class="text" current="0">0/0</span>
-                                </div>
+                                <div id="resin-area"><img src="${images["original_resin.png"]}"></div>
                             </div>
                         `
-                        let swicher = object == "resin" ? div.querySelector("#toggle-resin") : div.querySelector("#toggle-realm")
-                        swicher.checked = true
+                        div.querySelector("#toggle-resin").checked = true
                         after()
                     }
                     else{

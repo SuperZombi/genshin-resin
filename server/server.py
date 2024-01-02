@@ -9,7 +9,7 @@ from tools import *
 
 app = FastAPI(title="Genshin Resin API",
     description="Adds information about original resin to hoyolab",
-    version="2.0.0",
+    version="2.1.0",
     contact={
         "name": "GitHub",
         "url": "https://github.com/SuperZombi/genshin-resin-api"
@@ -50,9 +50,9 @@ async def get_User_Regions(ltuid: int, ltoken: str):
     description="Get information about user original resin",
     responses={424: Argument_Incorrect}
 )
-async def get_Original_Resin(ltuid: int, ltoken: str, prefer_region: str = None):
+async def get_Original_Resin(ltuid: int, ltmid: str, ltoken: str, prefer_region: str = None):
     try:
-        client = login(ltuid, ltoken)
+        client = login(ltuid, ltoken, ltmid)
         accounts = await get_accounts(client)
         account = get_account(accounts, prefer_region)
         account_info = get_account_info(account, accounts)
@@ -77,9 +77,9 @@ async def get_Original_Resin(ltuid: int, ltoken: str, prefer_region: str = None)
     description="Get information about user realm currency",
     responses={424: Argument_Incorrect}
 )
-async def get_Realm_Currency(ltuid: int, ltoken: str, prefer_region: str = None):
+async def get_Realm_Currency(ltuid: int, ltmid: str, ltoken: str, prefer_region: str = None):
     try:
-        client = login(ltuid, ltoken)
+        client = login(ltuid, ltoken, ltmid)
         accounts = await get_accounts(client)
         account = get_account(accounts, prefer_region)
         account_info = get_account_info(account, accounts)
