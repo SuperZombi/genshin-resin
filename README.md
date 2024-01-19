@@ -3,7 +3,7 @@
 ### Adds information about original resin to hoyolab.
 
 <p align="right">
-    <img align="left" src="https://shields.io/badge/version-v2.1.0-blue">
+    <img align="left" src="https://shields.io/badge/version-v3.0.0-blue">
     <a href="#donate"><img src="https://shields.io/badge/💲-Support_the_Project-2ea043"></a>
 </p>
 <p align="center">
@@ -25,14 +25,6 @@
 ### Tampermonkey:
   1. Install **[Tampermonkey](https://www.tampermonkey.net/)**.
   2. Install **[Script](https://raw.githubusercontent.com/SuperZombi/genshin-resin-api/main/genshin-resin.user.js)**.
-
-<hr>
-
-### ⚠️ [Plugin not working](https://github.com/SuperZombi/genshin-resin-api/issues/1) `FIX`
-
-<hr>
-
-### <a href="https://genshin-api.superzombi.repl.co/docs">API Documentation</a>
 
 <hr>
 
