@@ -1,6 +1,6 @@
 {
    "manifest_version": 3,
-   "version": "2.1.0",
+   "version": "3.0.0",
    "name": "Genshin Resin",
    "description": "__MSG_extDesc__",
    "default_locale": "en",
@@ -18,9 +18,6 @@
          "resources": [ "images/*" ],
          "matches": [ "https://www.hoyolab.com/*" ]
       }
-   ],
-   "permissions": [
-      "storage"
    ],
    "homepage_url": "https://github.com/SuperZombi/genshin-resin-api",
    "minimum_chrome_version": "107.0.5304.87"
