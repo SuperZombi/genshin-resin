@@ -19,6 +19,6 @@
          "matches": [ "https://www.hoyolab.com/*" ]
       }
    ],
-   "homepage_url": "https://github.com/SuperZombi/genshin-resin-api",
+   "homepage_url": "https://github.com/SuperZombi/genshin-resin",
    "minimum_chrome_version": "107.0.5304.87"
 }

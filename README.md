@@ -15,7 +15,7 @@
 ### [Chrome Web Store](https://chrome.google.com/webstore/detail/genshin-resin/kjplkomildkjihefphmmjbomchgggakf)
 
 ### Chrome:
-  1. Download latest **[Release](https://github.com/SuperZombi/genshin-resin-api/releases)**.
+  1. Download latest **[Release](https://github.com/SuperZombi/genshin-resin/releases)**.
   2. Extract the archive to an installation location.
   3. ```⋮``` > "Additional tools" > "Extensions".
   4. Turn on "Developer Mode".
@@ -24,7 +24,7 @@
 
 ### Tampermonkey:
   1. Install **[Tampermonkey](https://www.tampermonkey.net/)**.
-  2. Install **[Script](https://raw.githubusercontent.com/SuperZombi/genshin-resin-api/main/genshin-resin.user.js)**.
+  2. Install **[Script](https://raw.githubusercontent.com/SuperZombi/genshin-resin/main/genshin-resin.user.js)**.
 
 <hr>
 

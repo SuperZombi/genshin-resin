@@ -194,7 +194,7 @@ async function makeRequest(div, object="resin"){
 	});
 }
 
-GenshinServers = {
+const GenshinServers = {
 	US: "os_usa",
 	EU: "os_euro",
 	AS: "os_asia",
