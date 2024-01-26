@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Genshin Resin
-// @version      3.0.0
+// @version      3.1.0
 // @description  Adds a button to view info about original resin on hoyolab
 // @author       Super Zombi
 // @match        https://www.hoyolab.com/*
@@ -218,26 +218,30 @@ function makeRequest(div, object="resin"){
         let seconds = String(totalSeconds % 60).padStart(2, '0');
         return `${hours}:${minutes}:${seconds}`
     }
+    function getUnixTime(){
+        return Math.floor(Date.now() / 1000)
+    }
     function updateTime(newTime, type="resin"){
-        let description = div.querySelector("#resin #resin-description")
-        if (!description){return}
-        if (type == "resin"){
-            if (newTime % 480 == 0){
-                let resign = div.querySelector("#resin #resin-area > .text")
-                let currentResin = parseInt(resign.getAttribute("current")) + 1
-                resign.setAttribute("current", currentResin)
-                resign.innerHTML = `${currentResin}/160`
+        let targetTime = getUnixTime() + parseInt(newTime)
+        function render(){
+            let timeRemaining = Math.max(0, targetTime - getUnixTime())
+            let description = div.querySelector("#resin #resin-description")
+            if (!description){return}
+            if (type == "resin"){
+                if (timeRemaining % 480 == 0){
+                    let resign = div.querySelector("#resin #resin-area > .text")
+                    let currentResin = parseInt(resign.getAttribute("current")) + 1
+                    resign.setAttribute("current", currentResin)
+                    resign.innerHTML = `${currentResin}/160`
+                }
+                description.querySelector("#next-recover").innerHTML = intToTime(timeRemaining % 480)
             }
-            description.querySelector("#next-recover").innerHTML = intToTime(newTime % 480)
-        }
-        description.querySelector("#full-recover").innerHTML = intToTime(newTime)
+            description.querySelector("#full-recover").innerHTML = intToTime(timeRemaining)
 
-        if (newTime <= 0){
-            return
+            if (timeRemaining <= 0){return}
+            setTimeout(render, 1000)
         }
-        setTimeout(_=>{
-            updateTime(newTime - 1, type)
-        }, 1000)
+        render()
     }
     function initResinTimer(currentResin, maxResin, fullRecover, type="resin"){
         let resign = div.querySelector("#resin #resin-area > .text")
