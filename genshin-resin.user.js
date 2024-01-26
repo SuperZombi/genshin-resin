@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Genshin Resin
-// @version      3.1.0
+// @version      3.1.1
 // @description  Adds a button to view info about original resin on hoyolab
 // @author       Super Zombi
 // @match        https://www.hoyolab.com/*
@@ -221,20 +221,24 @@ function makeRequest(div, object="resin"){
     function getUnixTime(){
         return Math.floor(Date.now() / 1000)
     }
-    function updateTime(newTime, type="resin"){
-        let targetTime = getUnixTime() + parseInt(newTime)
+    function updateTime(fullRecover, type="resin", calculateCurrent){
+        let targetTime = getUnixTime() + parseInt(fullRecover)
         function render(){
             let timeRemaining = Math.max(0, targetTime - getUnixTime())
             let description = div.querySelector("#resin #resin-description")
             if (!description){return}
+
+            let current = calculateCurrent(timeRemaining)
+            let container = div.querySelector("#resin #resin-area > .text")
+            if (container.getAttribute("current") != current){
+                container.setAttribute("current", current)
+                container.innerHTML = `${current}/${container.getAttribute("max")}`
+            }
+
             if (type == "resin"){
-                if (timeRemaining % 480 == 0){
-                    let resign = div.querySelector("#resin #resin-area > .text")
-                    let currentResin = parseInt(resign.getAttribute("current")) + 1
-                    resign.setAttribute("current", currentResin)
-                    resign.innerHTML = `${currentResin}/160`
-                }
                 description.querySelector("#next-recover").innerHTML = intToTime(timeRemaining % 480)
+            } else{
+                description.querySelector("#next-recover").innerHTML = intToTime(timeRemaining % 3600)
             }
             description.querySelector("#full-recover").innerHTML = intToTime(timeRemaining)
 
@@ -243,13 +247,26 @@ function makeRequest(div, object="resin"){
         }
         render()
     }
-    function initResinTimer(currentResin, maxResin, fullRecover, type="resin"){
-        let resign = div.querySelector("#resin #resin-area > .text")
-        resign.setAttribute("current", currentResin)
-        resign.setAttribute("max", maxResin)
-        resign.innerHTML = `${currentResin}/${maxResin}`
+    function initResinTimer(current, max, fullRecover, type="resin"){
+        let container = div.querySelector("#resin #resin-area > .text")
+        container.setAttribute("current", current)
+        container.setAttribute("max", max)
+        container.innerHTML = `${current}/${max}`
         if (fullRecover != 0){
-            updateTime(fullRecover, type)
+            let calculate;
+            if (type == "resin"){
+                calculate = (timeRemaining)=>{
+                    return Math.floor((76800 - timeRemaining) / 480)
+                }
+            }
+            else{
+                let realmPerHour = Math.floor(3600 * (parseInt(max) - parseInt(current)) / parseInt(fullRecover))
+                let maxRecoverTime = parseInt(max) * 3600 / realmPerHour
+                calculate = (timeRemaining)=>{
+                    return Math.floor((maxRecoverTime - timeRemaining) / 3600) * realmPerHour
+                }
+            }
+            updateTime(fullRecover, type, calculate)
         }
     }
 
@@ -303,11 +320,9 @@ function makeRequest(div, object="resin"){
                         <div style="height: 5px"></div>
                         <span class="text">${get_message("full_recover")}</span>
                         <span class="time" id="full-recover">00:00:00</span>
-                        ${object == "resin" ? `
-                            <div style="height: 5px"></div>
-                            <span class="text">${get_message("next_recover")}</span>
-                            <span class="time" id="next-recover">00:00:00</span>
-                        ` : ""}
+                        <div style="height: 5px"></div>
+                        <span class="text">${get_message("next_recover")}</span>
+                        <span class="time" id="next-recover">00:00:00</span>
                     </div>
                     <div id="resin-area">
                         ${object == "resin" ? `
