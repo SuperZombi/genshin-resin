@@ -48,5 +48,3 @@
     </td>
   </tr>
 </table>
-    
-(But now it's better to email me and I'll send you the details)
