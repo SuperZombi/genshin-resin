@@ -82,8 +82,9 @@ async function makeRequest(div, object="resin"){
 		if (fullRecover != 0){
 			let calculate;
 			if (type == "resin"){
+				let fullRecoverTime = 60 * 8 * max
 				calculate = (timeRemaining)=>{
-					return Math.floor((76800 - timeRemaining) / 480)
+					return Math.floor((fullRecoverTime - timeRemaining) / 480)
 				}
 			}
 			else{

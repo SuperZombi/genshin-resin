@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Genshin Resin
-// @version      3.1.1
+// @version      3.2.0
 // @description  Adds a button to view info about original resin on hoyolab
 // @author       Super Zombi
 // @match        https://www.hoyolab.com/*
@@ -255,8 +255,9 @@ function makeRequest(div, object="resin"){
         if (fullRecover != 0){
             let calculate;
             if (type == "resin"){
+                let fullRecoverTime = 60 * 8 * max
                 calculate = (timeRemaining)=>{
-                    return Math.floor((76800 - timeRemaining) / 480)
+                    return Math.floor((fullRecoverTime - timeRemaining) / 480)
                 }
             }
             else{
