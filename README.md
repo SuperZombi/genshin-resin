@@ -12,7 +12,7 @@
 
 ## Installation:
 
-### [Chrome Web Store](https://chrome.google.com/webstore/detail/genshin-resin/kjplkomildkjihefphmmjbomchgggakf)
+### <img width="18px" src="https://www.svgrepo.com/show/452180/chrome.svg"> [Chrome Web Store](https://chrome.google.com/webstore/detail/genshin-resin/kjplkomildkjihefphmmjbomchgggakf)
 
 ### Chrome:
   1. Download latest **[Release](https://github.com/SuperZombi/genshin-resin/releases)**.
